@@ -25,7 +25,7 @@ class LoginScreen extends StatelessWidget {
                 children: [
                   // Lottie animation for engaging appeal
                   Lottie.asset(
-                    'assets/login_animation.json', // Replace with the path to your animation file
+                    'assets/login_anime.json', // Replace with the path to your animation file
                     width: 250,
                     height: 250,
                     fit: BoxFit.cover,

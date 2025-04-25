@@ -15,7 +15,7 @@ class AuthService {
   final redirectUri = dotenv.env['REDIRECT_URI']!;
 
   // Scopes define the permissions your app needs
-  final scopes = 'user-top-read';
+  final scopes = 'user-top-read playlist-modify-private playlist-modify-public';
 
   // --- Authenticate with Spotify ---
   Future<void> authenticateWithSpotify({bool forceLogin = true}) async {

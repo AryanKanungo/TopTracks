@@ -5,6 +5,7 @@ import 'package:top_tracks/services/spotify_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../widgets/app_drawer.dart';
+import '../widgets/generate_playlist_modal.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -34,6 +35,29 @@ class _HomeScreenState extends State<HomeScreen> {
     _fetchTracks(_timeRange);
   }
 
+  void _openGeneratePlaylistModal() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return GeneratePlaylistModal(
+          onPlaylistCreated: (message) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(message)));
+          },
+        );
+      },
+    );
+  }
+
+  String _modalMessage = '';
+
+  void _handlePlaylistDeletion(String message) {
+    print(
+      message,
+    ); // You can display this message in any way you'd like (Snackbar, Dialog, etc.)
+  }
+
   @override
   Widget build(BuildContext context) {
     final darkBg = Color(0xFF121212);
@@ -51,9 +75,9 @@ class _HomeScreenState extends State<HomeScreen> {
             _fetchTracks(newTimeRange);
           });
         },
+        onPlaylistDeleted: _handlePlaylistDeletion, // Pass the callback
       ),
       appBar: AppBar(
-        centerTitle: true,
         title: Text(
           "TopTracks",
           style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 24),
@@ -61,6 +85,36 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         flexibleSpace: Container(decoration: BoxDecoration(color: darkCard)),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(
+              right: 16.0,
+              bottom: 7.0,
+            ), // Set margin
+            child: ElevatedButton(
+              onPressed: _openGeneratePlaylistModal,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: accentGreen, // Accent color for button
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10), // Rounded corners
+                ),
+                padding: EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 24,
+                ), // Consistent padding
+                elevation: 5, // Slight shadow for depth
+              ),
+              child: Text(
+                'Generate',
+                style: GoogleFonts.roboto(
+                  color: Colors.white, // White text for contrast
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       body: Stack(
         children: [
@@ -76,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   topRight: Radius.circular(30),
                 ),
               ),
-              child: CustomPaint(painter: _WavePainter()),
+              // child: CustomPaint(painter: _WavePainter()),
             ),
           ),
           // Main content
@@ -127,13 +181,35 @@ class _HomeScreenState extends State<HomeScreen> {
                               fit: BoxFit.cover,
                             ),
                           ),
-                          title: Text(
-                            track.name,
-                            style: GoogleFonts.poppins(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
+                          title: Row(
+                            children: [
+                              // Display the track number
+                              Text(
+                                '#${index + 1}', // Adding 1 to the index to make it 1-based
+                                style: GoogleFonts.poppins(
+                                  color:
+                                      accentGreen, // Use accent color for the number
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 8,
+                              ), // Space between the number and track name
+                              Expanded(
+                                child: Text(
+                                  track.name,
+                                  overflow:
+                                      TextOverflow
+                                          .ellipsis, // Prevent overflow by truncating the text
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                           subtitle: Text(
                             '${track.artist} • ${track.album}',
@@ -172,38 +248,39 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class _WavePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint =
-        Paint()
-          ..color = Colors.black.withOpacity(0.3)
-          ..style = PaintingStyle.fill;
-
-    final path =
-        Path()
-          ..lineTo(0, 0)
-          ..lineTo(0, size.height)
-          ..quadraticBezierTo(
-            size.width * 0.25,
-            size.height - 40,
-            size.width * 0.5,
-            size.height - 30,
-          )
-          ..quadraticBezierTo(
-            size.width * 0.75,
-            size.height - 20,
-            size.width,
-            size.height - 40,
-          )
-          ..lineTo(size.width, 0)
-          ..close();
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return false;
-  }
-}
+//
+// class _WavePainter extends CustomPainter {
+//   @override
+//   void paint(Canvas canvas, Size size) {
+//     final paint =
+//         Paint()
+//           ..color = Colors.black.withOpacity(0.3)
+//           ..style = PaintingStyle.fill;
+//
+//     final path =
+//         Path()
+//           ..lineTo(0, 0)
+//           ..lineTo(0, size.height)
+//           ..quadraticBezierTo(
+//             size.width * 0.25,
+//             size.height - 40,
+//             size.width * 0.5,
+//             size.height - 30,
+//           )
+//           ..quadraticBezierTo(
+//             size.width * 0.75,
+//             size.height - 20,
+//             size.width,
+//             size.height - 40,
+//           )
+//           ..lineTo(size.width, 0)
+//           ..close();
+//
+//     canvas.drawPath(path, paint);
+//   }
+//
+//   @override
+//   bool shouldRepaint(covariant CustomPainter oldDelegate) {
+//     return false;
+//   }
+// }

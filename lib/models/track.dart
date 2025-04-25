@@ -6,13 +6,14 @@ class Track {
   final String album;
   final String imageUrl;
   final String spotifyUrl; // Added field
-
+  final String uri;
   Track({
     required this.name,
     required this.artist,
     required this.album,
     required this.imageUrl,
-    required this.spotifyUrl, // Updated constructor
+    required this.spotifyUrl,
+    required this.uri, // Updated constructor
   });
 
   factory Track.fromJson(Map<String, dynamic> json) {
@@ -23,7 +24,8 @@ class Track {
       album: json['album']['name'],
       imageUrl:
           json['album']['images'][0]['url'], // Getting the first image of the album
-      spotifyUrl: json['external_urls']['spotify'], // Parsing Spotify URL
+      spotifyUrl: json['external_urls']['spotify'],
+      uri: json['uri'], // Parsing Spotify URL
     );
   }
 }
